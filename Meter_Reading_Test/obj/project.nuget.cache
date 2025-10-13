@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Gi7/qVTXhes=",
+  "success": true,
+  "projectFilePath": "C:\\Algo Orange\\Meter_Reading_Test\\Meter_Reading_Test\\Meter_Reading_Test.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\manoj\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.21.0\\microsoft.visualstudio.azure.containers.tools.targets.1.21.0.nupkg.sha512"
+  ],
+  "logs": []
+}

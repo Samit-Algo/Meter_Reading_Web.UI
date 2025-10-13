@@ -1,0 +1,2169 @@
+﻿@page
+@model Meter_Reading_Test.Pages.AdminModel
+@{
+    ViewData["Title"] = "Meter Reading OCR";
+}
+
+<!-- ========================================
+     METER READING OCR APPLICATION
+     Professional Structure for Cloud Deployment
+     ======================================== -->
+
+<div class="container-fluid">
+                <!-- Page Header -->
+                <div class="row mb-4 justify-content-center">
+                    <div class="col-lg-10 col-xl-8">
+                        <div class="text-center">
+                            <h1 class="h3 mb-1">Meter Reading OCR</h1>
+                                <p class="text-muted mb-0">Upload an image to extract meter readings using advanced OCR technology</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="row mb-4 justify-content-center">
+                    <div class="col-lg-10 col-xl-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <!-- Drag and Drop Area -->
+                                <div class="rounded-3 py-3 px-4 text-center d-flex align-items-center justify-content-center" 
+                                     id="dragDropArea" 
+                                     style="cursor: pointer; transition: all 0.3s ease; min-height: 120px; max-height: 120px;">
+                                    <div class="d-flex align-items-center">
+                                        <i class="uil uil-cloud-upload text-primary me-3" style="font-size: 2rem;"></i>
+                                        <div class="text-start">
+                                            <h6 class="mb-1">Drop your meter image here</h6>
+                                            <p class="text-muted mb-0 small">or <span class="text-primary">click to browse files</span></p>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="fileInput" accept="image/*" class="d-none" />
+                                </div>
+                                
+                                <!-- Image Preview -->
+                                <div id="imagePreview" class="mt-4 d-none">
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-10 col-lg-8">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="card border">
+                                                        <div class="card-header text-center">
+                                                            <h6 class="mb-0">Image Preview</h6>
+                                                        </div>
+                                                        <div class="card-body p-2 d-flex align-items-center justify-content-center" style="height: 200px; width: 100%;">
+                                                            <img id="previewImg" class="rounded" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="card border">
+                                                        <div class="card-header text-center">
+                                                            <h6 class="mb-0">File Information</h6>
+                                                        </div>
+                                                        <div class="card-body d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                            <div class="text-center">
+                                                                <h6 class="mb-3" id="fileName">filename.jpg</h6>
+                                                                <p class="text-muted mb-2">Size: <span id="fileSize">0 KB</span></p>
+                                                                <p class="text-muted mb-4">Type: <span id="fileType">image/jpeg</span></p>
+                                                                <button type="button" class="btn btn-outline-danger btn-sm" id="removeFile">
+                                                                    <i class="uil uil-trash me-1"></i>Remove
+                                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                                <div class="text-center mt-4">
+                        <div class="glow-button-container">
+                            <button type="button" class="btn btn-primary btn-lg px-5 glow-button" id="submitBtn" disabled>
+                                <span class="button-content">
+                                    <span class="button-text">ANALYZE READING</span>
+                                </span>
+                                <div class="glow-effect"></div>
+                            </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+    <!-- Processing Steps Section -->
+                <div class="row mb-4 d-none justify-content-center" id="processingSteps">
+                    <div class="col-lg-10 col-xl-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                        <!-- Desktop Layout -->
+                        <div class="d-none d-lg-flex justify-content-center align-items-center flex-wrap gap-3" id="desktopSteps">
+                                    <!-- Step 1: Original Image -->
+                                    <div class="text-center processing-step" id="step1">
+                                        <div class="step-card border rounded p-2" style="width: 120px; height: 140px;">
+                                            <div class="d-flex flex-column h-100">
+                                                <!-- Image Container -->
+                                                <div class="step-image-container mb-2 flex-grow-1 d-flex align-items-center justify-content-center position-relative" style="height: 70px; overflow: hidden; border-radius: 6px;">
+                                                    <img class="step-image d-none" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px;" />
+                                                    <i class="uil uil-image text-muted fs-3 step-icon"></i>
+                                                    
+                                                    <!-- Processing Effects -->
+                                                    <div class="processing-overlay d-none">
+                                                        <div class="scanning-line"></div>
+                                                        <div class="processing-particles">
+                                                            <div class="particle"></div>
+                                                            <div class="particle"></div>
+                                                            <div class="particle"></div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                
+                                                <!-- Step Info -->
+                                                <div class="step-info">
+                                                    <h6 class="mb-1 small">Original Image</h6>
+                                                    <p class="small text-muted mb-0 step-status">Ready</p>
+                                                    <div class="progress mt-1 d-none step-progress" style="height: 2px;">
+                                                        <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="arrow-container d-none d-lg-block">
+                                        <i class="uil uil-arrow-right text-muted fs-4 processing-arrow"></i>
+                                    </div>
+                                    
+                                    <!-- Step 2: YOLO Crop -->
+                                    <div class="text-center processing-step" id="step2">
+                                        <div class="step-card border rounded p-2" style="width: 120px; height: 140px;">
+                                            <div class="d-flex flex-column h-100">
+                                                <div class="step-image-container mb-2 flex-grow-1 d-flex align-items-center justify-content-center position-relative" style="height: 70px; overflow: hidden; border-radius: 6px;">
+                                                    <img class="step-image d-none" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px;" />
+                                                    <i class="uil uil-crop-alt text-muted fs-3 step-icon"></i>
+                                                    
+                                                    <div class="processing-overlay d-none">
+                                                        <div class="crop-box"></div>
+                                                        <div class="crop-corners">
+                                                            <div class="corner top-left"></div>
+                                                            <div class="corner top-right"></div>
+                                                            <div class="corner bottom-left"></div>
+                                                            <div class="corner bottom-right"></div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                
+                                                <div class="step-info">
+                                                    <h6 class="mb-1 small">YOLO Crop</h6>
+                                                    <p class="small text-muted mb-0 step-status">Ready</p>
+                                                    <div class="progress mt-1 d-none step-progress" style="height: 2px;">
+                                                        <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="arrow-container d-none d-lg-block">
+                                        <i class="uil uil-arrow-right text-muted fs-4 processing-arrow"></i>
+                                    </div>
+                                    
+                                    <!-- Step 3: Paddle OCR -->
+                                    <div class="text-center processing-step" id="step3">
+                                        <div class="step-card border rounded p-2" style="width: 120px; height: 140px;">
+                                            <div class="d-flex flex-column h-100">
+                                                <div class="step-image-container mb-2 flex-grow-1 d-flex align-items-center justify-content-center position-relative" style="height: 70px; overflow: hidden; border-radius: 6px;">
+                                                    <img class="step-image d-none" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px;" />
+                                                    <i class="uil uil-eye text-muted fs-3 step-icon"></i>
+                                                    
+                                                    <div class="processing-overlay d-none">
+                                                        <div class="ocr-scanner"></div>
+                                                        <div class="text-detection-boxes">
+                                                            <div class="detection-box box1"></div>
+                                                            <div class="detection-box box2"></div>
+                                                            <div class="detection-box box3"></div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                
+                                                <div class="step-info">
+                                                    <h6 class="mb-1 small">Paddle OCR</h6>
+                                                    <p class="small text-muted mb-0 step-status">Ready</p>
+                                                    <div class="progress mt-1 d-none step-progress" style="height: 2px;">
+                                                        <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="arrow-container d-none d-lg-block">
+                                        <i class="uil uil-arrow-right text-muted fs-4 processing-arrow"></i>
+                                    </div>
+                                    
+                                    <!-- Step 4: Easy OCR -->
+                                    <div class="text-center processing-step" id="step4">
+                                        <div class="step-card border rounded p-2" style="width: 120px; height: 140px;">
+                                            <div class="d-flex flex-column h-100">
+                                                <div class="step-image-container mb-2 flex-grow-1 d-flex align-items-center justify-content-center position-relative" style="height: 70px; overflow: hidden; border-radius: 6px;">
+                                                    <img class="step-image d-none" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px;" />
+                                                    <i class="uil uil-eye text-muted fs-3 step-icon"></i>
+                                                    
+                                                    <div class="processing-overlay d-none">
+                                                        <div class="enhancement-grid"></div>
+                                                        <div class="enhancement-waves">
+                                                            <div class="wave wave1"></div>
+                                                            <div class="wave wave2"></div>
+                                                            <div class="wave wave3"></div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                
+                                                <div class="step-info">
+                                                    <h6 class="mb-1 small">Easy OCR</h6>
+                                                    <p class="small text-muted mb-0 step-status">Ready</p>
+                                                    <div class="progress mt-1 d-none step-progress" style="height: 2px;">
+                                                        <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="arrow-container d-none d-lg-block">
+                                        <i class="uil uil-arrow-right text-muted fs-4 processing-arrow"></i>
+                                    </div>
+                                    
+                                    <!-- Step 5: Surya OCR -->
+                                    <div class="text-center processing-step" id="step5">
+                                        <div class="step-card border rounded p-2" style="width: 120px; height: 140px;">
+                                            <div class="d-flex flex-column h-100">
+                                                <div class="step-image-container mb-2 flex-grow-1 d-flex align-items-center justify-content-center position-relative" style="height: 70px; overflow: hidden; border-radius: 6px;">
+                                                    <img class="step-image d-none" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px;" />
+                                                    <i class="uil uil-eye text-muted fs-3 step-icon"></i>
+                                                    
+                                                    <div class="processing-overlay d-none">
+                                                        <div class="final-analysis"></div>
+                                                        <div class="result-highlight">
+                                                            <div class="highlight-box"></div>
+                                                            <div class="result-sparkles">
+                                                                <div class="sparkle s1"></div>
+                                                                <div class="sparkle s2"></div>
+                                                                <div class="sparkle s3"></div>
+                                                                <div class="sparkle s4"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                                
+                                                <div class="step-info">
+                                                    <h6 class="mb-1 small">Surya OCR</h6>
+                                                    <p class="small text-muted mb-0 step-status">Ready</p>
+                                                    <div class="progress mt-1 d-none step-progress" style="height: 2px;">
+                                                        <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                        </div>
+                        
+                        <!-- Mobile Layout -->
+                        <div class="d-lg-none" id="mobileSteps">
+                            <div class="mobile-steps-container">
+                                <!-- Mobile Step 1 -->
+                                <div class="mobile-step d-flex align-items-center mb-3 p-3 border rounded" id="mobileStep1">
+                                    <div class="mobile-step-icon me-3">
+                                        <div class="mobile-icon-container">
+                                            <img class="mobile-step-image d-none" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" />
+                                            <i class="uil uil-image text-muted fs-4 mobile-step-icon-fallback"></i>
+                                            <div class="mobile-processing-overlay d-none">
+                                                <div class="mobile-spinner"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-content flex-grow-1">
+                                        <h6 class="mb-1">Original Image</h6>
+                                        <p class="text-muted mb-1 small mobile-step-status">Ready</p>
+                                        <div class="progress mobile-step-progress d-none" style="height: 4px;">
+                                            <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-indicator">
+                                        <i class="uil uil-check-circle text-success fs-5 d-none mobile-success-icon"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Step 2 -->
+                                <div class="mobile-step d-flex align-items-center mb-3 p-3 border rounded" id="mobileStep2">
+                                    <div class="mobile-step-icon me-3">
+                                        <div class="mobile-icon-container">
+                                            <img class="mobile-step-image d-none" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" />
+                                            <i class="uil uil-crop-alt text-muted fs-4 mobile-step-icon-fallback"></i>
+                                            <div class="mobile-processing-overlay d-none">
+                                                <div class="mobile-spinner"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-content flex-grow-1">
+                                        <h6 class="mb-1">YOLO Crop</h6>
+                                        <p class="text-muted mb-1 small mobile-step-status">Ready</p>
+                                        <div class="progress mobile-step-progress d-none" style="height: 4px;">
+                                            <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-indicator">
+                                        <i class="uil uil-check-circle text-success fs-5 d-none mobile-success-icon"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Step 3 -->
+                                <div class="mobile-step d-flex align-items-center mb-3 p-3 border rounded" id="mobileStep3">
+                                    <div class="mobile-step-icon me-3">
+                                        <div class="mobile-icon-container">
+                                            <img class="mobile-step-image d-none" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" />
+                                            <i class="uil uil-eye text-muted fs-4 mobile-step-icon-fallback"></i>
+                                            <div class="mobile-processing-overlay d-none">
+                                                <div class="mobile-spinner"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-content flex-grow-1">
+                                        <h6 class="mb-1">Paddle OCR</h6>
+                                        <p class="text-muted mb-1 small mobile-step-status">Ready</p>
+                                        <div class="progress mobile-step-progress d-none" style="height: 4px;">
+                                            <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-indicator">
+                                        <i class="uil uil-check-circle text-success fs-5 d-none mobile-success-icon"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Step 4 -->
+                                <div class="mobile-step d-flex align-items-center mb-3 p-3 border rounded" id="mobileStep4">
+                                    <div class="mobile-step-icon me-3">
+                                        <div class="mobile-icon-container">
+                                            <img class="mobile-step-image d-none" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" />
+                                            <i class="uil uil-eye text-muted fs-4 mobile-step-icon-fallback"></i>
+                                            <div class="mobile-processing-overlay d-none">
+                                                <div class="mobile-spinner"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-content flex-grow-1">
+                                        <h6 class="mb-1">Easy OCR</h6>
+                                        <p class="text-muted mb-1 small mobile-step-status">Ready</p>
+                                        <div class="progress mobile-step-progress d-none" style="height: 4px;">
+                                            <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-indicator">
+                                        <i class="uil uil-check-circle text-success fs-5 d-none mobile-success-icon"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Step 5 -->
+                                <div class="mobile-step d-flex align-items-center mb-3 p-3 border rounded" id="mobileStep5">
+                                    <div class="mobile-step-icon me-3">
+                                        <div class="mobile-icon-container">
+                                            <img class="mobile-step-image d-none" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" />
+                                            <i class="uil uil-eye text-muted fs-4 mobile-step-icon-fallback"></i>
+                                            <div class="mobile-processing-overlay d-none">
+                                                <div class="mobile-spinner"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-content flex-grow-1">
+                                        <h6 class="mb-1">Surya OCR</h6>
+                                        <p class="text-muted mb-1 small mobile-step-status">Ready</p>
+                                        <div class="progress mobile-step-progress d-none" style="height: 4px;">
+                                            <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-step-indicator">
+                                        <i class="uil uil-check-circle text-success fs-5 d-none mobile-success-icon"></i>
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="row mb-4 d-none justify-content-center" id="resultsSection">
+                    <div class="col-lg-10 col-xl-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="row justify-content-center">
+                                    <!-- Final Result -->
+                                        <div class="card border">
+                                            <div class="card-header text-center">
+                                                <h6 class="mb-0">Meter Reading</h6>
+                                            </div>
+                                                    <div class="card-body d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                        <div class="text-center d-none" id="finalResultContent">
+                                                    <div class="mb-3">
+                                                        <span class="badge" id="confidenceDisplay"></span>
+                                                        <small class="text-muted ms-1">Confidence</small>
+                                                    </div>
+                                                    <div class="display-4 text-primary fw-bold mb-2" id="finalResult"></div>
+                                                    <div class="d-none" id="reasonDisplay">
+                                                        <small class="text-muted fst-italic" id="reasonText"></small>
+                                                    </div>
+                                                </div>
+                                                        <div id="resultSkeleton" class="skeleton-placeholder text-center">
+                                                            <div class="skeleton-number mb-2"></div>
+                                                            <div class="skeleton-text"></div>
+                                            </div>
+                                        </div>
+                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+</div>
+<!-- End Container -->
+
+                <!-- Image Zoom Modal -->
+                <div class="modal fade" id="imageZoomModal" tabindex="-1" aria-labelledby="imageZoomModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title" id="imageZoomModalLabel">Image Preview</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-0 position-relative">
+                                <div class="image-zoom-container" id="imageZoomContainer">
+                                    <img id="modalImage" class="img-fluid" alt="Zoomable Image" style="cursor: grab; max-width: none; transition: transform 0.3s ease;">
+                                </div>
+                                
+                                <!-- Zoom Controls -->
+                                <div class="zoom-controls position-absolute top-50 start-0 translate-middle-y ms-3">
+                                    <div class="btn-group-vertical">
+                                        <button type="button" class="btn btn-light btn-sm mb-2" id="zoomInBtn" title="Zoom In">
+                                            <i class="uil uil-plus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-light btn-sm mb-2" id="zoomOutBtn" title="Zoom Out">
+                                            <i class="uil uil-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-light btn-sm" id="resetZoomBtn" title="Reset Zoom">
+                                            <i class="uil uil-refresh"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Zoom Level Indicator -->
+                                <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                                    <span class="badge bg-secondary" id="zoomLevel">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+@section Scripts {
+    <!-- ========================================
+         CSS STYLES SECTION
+         Organized by functionality for easy maintenance
+         ======================================== -->
+    
+    <!-- Main Application Styles -->
+    <style>
+        /* ========================================
+           DRAG & DROP AND UPLOAD STYLES
+           ======================================== */
+        
+        /* Drag and drop area styling */
+        #dragDropArea {
+            background-color: var(--bs-gray-100, #e9ecef) !important;
+            border: 2px dashed var(--bs-gray-300, #adb5bd) !important;
+            color: var(--bs-body-color);
+            transition: all 0.3s ease;
+        }
+
+        #dragDropArea:hover {
+            background-color: var(--bs-primary-bg-subtle) !important;
+            border-color: var(--bs-primary, #0d6efd) !important;
+        }
+
+        /* Preview image cursor */
+        #previewImg {
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        #previewImg:hover {
+            opacity: 0.8;
+        }
+
+        /* ========================================
+           GLOW BUTTON STYLES
+           ======================================== */
+        
+        .glow-button-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .glow-button {
+            position: relative;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42, #ff6b35);
+            background-size: 300% 300%;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: white;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .glow-button:not(:disabled):hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.2);
+            animation: gradientShift 1.5s ease infinite;
+        }
+
+        .glow-button:disabled {
+            background: linear-gradient(45deg, #6c757d, #adb5bd, #6c757d);
+            background-size: 300% 300%;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+            animation: none;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .glow-button.processing {
+            background: linear-gradient(45deg, #e85d04, #f48c06, #e85d04);
+            background-size: 300% 300%;
+            animation: gradientShift 1s ease infinite;
+            pointer-events: none;
+            box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.2);
+        }
+
+        .button-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button-text {
+            position: relative;
+        }
+
+        .glow-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            border-radius: 50px;
+        }
+
+        .glow-button:not(:disabled):hover .glow-effect {
+            transform: translateX(100%);
+        }
+
+        /* ========================================
+           CARD AND LAYOUT STYLES
+           ======================================== */
+        
+        .card {
+            background-color: var(--bs-gray-50, #f8f9fa);
+            border: none !important;
+        }
+
+        .card-header {
+            background-color: var(--bs-gray-100, #e9ecef);
+            border: none !important;
+        }
+
+        /* Modal styles */
+        .modal-content {
+            background-color: var(--bs-body-bg);
+            border-color: var(--bs-border-color);
+        }
+
+        .modal-header {
+            background-color: var(--bs-gray-100, #e9ecef);
+            border-color: var(--bs-border-color);
+            border-bottom: 1px solid var(--bs-border-color);
+        }
+    </style>
+
+    <!-- Processing Steps Styles -->
+    <style>
+        /* ========================================
+           PROCESSING STEPS ANIMATIONS & STYLES
+           ======================================== */
+        
+        .processing-step {
+            opacity: 0.5;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .processing-step.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .processing-step.completed {
+            opacity: 1;
+        }
+
+        .step-card {
+            transition: all 0.3s ease;
+            border-color: #dee2e6 !important;
+            background-color: var(--bs-body-bg) !important;
+            border-color: var(--bs-border-color-translucent) !important;
+        }
+
+        .step-card.processing {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 20px rgba(13, 110, 253, 0.3);
+            animation: cardPulse 2s infinite;
+            border-color: rgba(var(--bs-primary-rgb), 0.5) !important;
+        }
+
+        .step-card.completed {
+            border-color: #198754 !important;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+            border-color: rgba(var(--bs-success-rgb), 0.5) !important;
+            background: linear-gradient(135deg, 
+                color-mix(in srgb, var(--bs-success) 10%, var(--bs-body-bg)) 0%, 
+                color-mix(in srgb, var(--bs-success) 5%, var(--bs-body-bg)) 100%) !important;
+        }
+
+        .step-image-container {
+            background: var(--bs-secondary-bg);
+            border-radius: 6px;
+        }
+
+        .processing-arrow.active {
+            color: #0d6efd !important;
+            animation: arrowFlow 2s infinite;
+        }
+
+        /* Progress Bar Animation */
+        .step-progress .progress-bar {
+            transition: width 0.3s ease;
+            animation: progressShimmer 2s infinite;
+        }
+
+        .step-progress.active .progress-bar {
+            background: linear-gradient(
+                90deg,
+                #0d6efd 25%,
+                #66b3ff 50%,
+                #0d6efd 75%
+            );
+            background-size: 200px 100%;
+        }
+
+        /* Image Transition Effects */
+        .step-image {
+            transition: all 0.5s ease;
+        }
+
+        .step-image.processing {
+            filter: brightness(1.1) contrast(1.1);
+            animation: imageProcess 2s infinite;
+        }
+
+        .step-image.completed {
+            filter: brightness(1.1) contrast(1.1) saturate(1.1);
+        }
+
+        /* ========================================
+           KEYFRAME ANIMATIONS
+           ======================================== */
+
+        /* Card Pulse Animation */
+        @@keyframes cardPulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(13, 110, 253, 0.3);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(13, 110, 253, 0.5);
+                transform: scale(1.02);
+            }
+        }
+
+        @@keyframes arrowFlow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        @@keyframes progressShimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: 200px 0; }
+        }
+
+        @@keyframes imageProcess {
+            0%, 100% { filter: brightness(1.1) contrast(1.1) saturate(1); }
+            50% { filter: brightness(1.3) contrast(1.3) saturate(1.2); }
+        }
+
+        @@keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @@keyframes celebrationPulse {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(25, 135, 84, 0.3);
+            }
+            50% { 
+                transform: scale(1.08);
+                box-shadow: 0 0 40px rgba(25, 135, 84, 0.6);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(25, 135, 84, 0.3);
+            }
+        }
+
+    </style>
+
+    <!-- Step Animation Effects Styles -->
+    <style>
+        /* ========================================
+           STEP-SPECIFIC ANIMATION EFFECTS
+           ======================================== */
+
+        /* Step 1: Scanning Line Animation */
+        .scanning-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0d6efd, transparent);
+            animation: scanLine 2s infinite;
+        }
+
+        .processing-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #0d6efd;
+            border-radius: 50%;
+            animation: particleFloat 3s infinite;
+        }
+
+        .particle:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 60%; left: 70%; animation-delay: 1s; }
+        .particle:nth-child(3) { top: 80%; left: 30%; animation-delay: 2s; }
+
+        /* Step 2: Crop Box Animation */
+        .crop-box {
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 60%;
+            height: 60%;
+            border: 2px dashed #0d6efd;
+            animation: cropBoxResize 3s infinite;
+        }
+
+        .crop-corners .corner {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border: 2px solid #0d6efd;
+            background: white;
+        }
+
+        .corner.top-left { top: 18%; left: 18%; border-right: none; border-bottom: none; animation: cornerPulse 2s infinite; }
+        .corner.top-right { top: 18%; right: 18%; border-left: none; border-bottom: none; animation: cornerPulse 2s infinite 0.5s; }
+        .corner.bottom-left { bottom: 18%; left: 18%; border-right: none; border-top: none; animation: cornerPulse 2s infinite 1s; }
+        .corner.bottom-right { bottom: 18%; right: 18%; border-left: none; border-top: none; animation: cornerPulse 2s infinite 1.5s; }
+
+        /* Step 3: OCR Scanner */
+        .ocr-scanner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(13, 110, 253, 0.1) 50%, transparent 70%);
+            animation: ocrScan 2.5s infinite;
+        }
+
+        .detection-box {
+            position: absolute;
+            border: 1px solid #0d6efd;
+            background: rgba(13, 110, 253, 0.1);
+            animation: detectionAppear 0.5s ease-out;
+        }
+
+        .box1 { top: 30%; left: 25%; width: 50%; height: 15%; animation-delay: 1s; }
+        .box2 { top: 50%; left: 20%; width: 60%; height: 12%; animation-delay: 1.5s; }
+        .box3 { top: 70%; left: 30%; width: 40%; height: 10%; animation-delay: 2s; }
+
+        /* Step 4: Enhancement Grid */
+        .enhancement-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(13, 110, 253, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13, 110, 253, 0.1) 1px, transparent 1px);
+            background-size: 10px 10px;
+            animation: gridEnhance 3s infinite;
+        }
+
+        .wave {
+            position: absolute;
+            border: 2px solid #0d6efd;
+            border-radius: 50%;
+            animation: waveExpand 2s infinite;
+        }
+
+        .wave1 { top: 40%; left: 40%; width: 20%; height: 20%; animation-delay: 0s; }
+        .wave2 { top: 35%; left: 35%; width: 30%; height: 30%; animation-delay: 0.7s; }
+        .wave3 { top: 30%; left: 30%; width: 40%; height: 40%; animation-delay: 1.4s; }
+
+        /* Step 5: Final Analysis */
+        .final-analysis {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(13, 110, 253, 0.2) 0%, rgba(13, 110, 253, 0.1) 50%, transparent 100%);
+            animation: finalPulse 2s infinite;
+        }
+
+        .highlight-box {
+            position: absolute;
+            top: 35%;
+            left: 25%;
+            width: 50%;
+            height: 30%;
+            border: 2px solid #198754;
+            background: rgba(25, 135, 84, 0.1);
+            animation: highlightGlow 1.5s infinite alternate;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ffc107;
+            border-radius: 50%;
+            animation: sparkleShine 1s infinite;
+        }
+
+        .s1 { top: 20%; left: 20%; animation-delay: 0s; }
+        .s2 { top: 25%; right: 25%; animation-delay: 0.3s; }
+        .s3 { bottom: 25%; left: 30%; animation-delay: 0.6s; }
+        .s4 { bottom: 20%; right: 20%; animation-delay: 0.9s; }
+
+        /* ========================================
+           STEP ANIMATION KEYFRAMES
+           ======================================== */
+        
+        @@keyframes scanLine {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(98px); opacity: 0; }
+        }
+
+        @@keyframes particleFloat {
+            0%, 100% { transform: translateY(0) scale(0); opacity: 0; }
+            50% { transform: translateY(-20px) scale(1); opacity: 1; }
+        }
+
+        @@keyframes cropBoxResize {
+            0% { top: 40%; left: 40%; width: 20%; height: 20%; opacity: 0; }
+            50% { top: 20%; left: 20%; width: 60%; height: 60%; opacity: 1; }
+            100% { top: 30%; left: 30%; width: 40%; height: 40%; opacity: 0.7; }
+        }
+
+        @@keyframes cornerPulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        @@keyframes ocrScan {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(200%) rotate(45deg); }
+        }
+
+        @@keyframes detectionAppear {
+            0% { opacity: 0; transform: scale(0.8); border-color: transparent; }
+            100% { opacity: 1; transform: scale(1); border-color: #0d6efd; }
+        }
+
+        @@keyframes gridEnhance {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @@keyframes waveExpand {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        @@keyframes finalPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        @@keyframes highlightGlow {
+            0% { box-shadow: 0 0 5px rgba(25, 135, 84, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(25, 135, 84, 0.8); }
+        }
+
+        @@keyframes sparkleShine {
+            0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1) rotate(180deg); opacity: 1; }
+        }
+    </style>
+
+    <!-- Mobile & Responsive Styles -->
+    <style>
+        /* ========================================
+           MOBILE & RESPONSIVE STYLES
+           ======================================== */
+
+        /* Mobile Steps Styling */
+        .mobile-steps-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .mobile-step {
+            transition: all 0.3s ease;
+            background: var(--bs-body-bg) !important;
+            border-color: var(--bs-border-color-translucent) !important;
+        }
+
+        .mobile-step.active {
+            border-color: rgba(var(--bs-primary-rgb), 0.5) !important;
+            background: linear-gradient(135deg, 
+                color-mix(in srgb, var(--bs-primary) 10%, var(--bs-body-bg)) 0%, 
+                color-mix(in srgb, var(--bs-primary) 5%, var(--bs-body-bg)) 100%) !important;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+        }
+
+        .mobile-step.completed {
+            border-color: rgba(var(--bs-success-rgb), 0.5) !important;
+            background: linear-gradient(135deg, 
+                color-mix(in srgb, var(--bs-success) 10%, var(--bs-body-bg)) 0%, 
+                color-mix(in srgb, var(--bs-success) 5%, var(--bs-body-bg)) 100%) !important;
+        }
+
+        .mobile-icon-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--bs-secondary-bg) !important;
+            border: 2px solid var(--bs-border-color-translucent) !important;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-step.active .mobile-icon-container {
+            border-color: rgba(var(--bs-primary-rgb), 0.6) !important;
+            background: color-mix(in srgb, var(--bs-primary) 15%, var(--bs-body-bg)) !important;
+        }
+
+        .mobile-step.completed .mobile-icon-container {
+            border-color: rgba(var(--bs-success-rgb), 0.6) !important;
+            background: color-mix(in srgb, var(--bs-success) 15%, var(--bs-body-bg)) !important;
+        }
+
+        .mobile-processing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: color-mix(in srgb, var(--bs-primary) 10%, transparent) !important;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #dee2e6;
+            border-top-color: #0d6efd;
+            border-radius: 50%;
+            animation: mobileSpinnerRotate 1s linear infinite;
+        }
+
+        .mobile-step-content h6 {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .mobile-step.active .mobile-step-content h6 { color: #0d6efd; }
+        .mobile-step.completed .mobile-step-content h6 { color: #198754; }
+
+        .mobile-step-status { font-size: 0.8rem; }
+        .mobile-step.active .mobile-step-status { color: #0d6efd !important; }
+        .mobile-step.completed .mobile-step-status { color: #198754 !important; }
+
+        .mobile-step-progress .progress-bar { transition: width 0.3s ease; }
+
+        .mobile-success-icon {
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-step.completed .mobile-success-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ========================================
+           SKELETON LOADING STYLES
+           ======================================== */
+        
+        .skeleton-placeholder {
+            width: 100%;
+            height: 100%;
+        }
+
+        .skeleton-image {
+            width: 150px;
+            height: 120px;
+            background: linear-gradient(90deg, 
+                var(--bs-secondary-bg) 25%, 
+                color-mix(in srgb, var(--bs-secondary) 20%, var(--bs-body-bg)) 50%, 
+                var(--bs-secondary-bg) 75%) !important;
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+            border-radius: 8px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .skeleton-image::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--bs-border-color) !important;
+            border-radius: 50%;
+            border-top-color: var(--bs-secondary) !important;
+            animation: skeletonSpin 1s linear infinite;
+        }
+
+        .skeleton-number {
+            width: 120px;
+            height: 40px;
+            background: linear-gradient(90deg, 
+                var(--bs-secondary-bg) 25%, 
+                color-mix(in srgb, var(--bs-secondary) 20%, var(--bs-body-bg)) 50%, 
+                var(--bs-secondary-bg) 75%) !important;
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+            border-radius: 6px;
+            margin: 0 auto;
+        }
+
+        .skeleton-text {
+            width: 80px;
+            height: 16px;
+            background: linear-gradient(90deg, 
+                var(--bs-secondary-bg) 25%, 
+                color-mix(in srgb, var(--bs-secondary) 20%, var(--bs-body-bg)) 50%, 
+                var(--bs-secondary-bg) 75%) !important;
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+            border-radius: 4px;
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           IMAGE ZOOM MODAL STYLES
+           ======================================== */
+        
+        .image-zoom-container {
+            overflow: hidden;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        #modalImage {
+            transform-origin: center center;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        #modalImage:active {
+            cursor: grabbing !important;
+        }
+
+        .zoom-controls {
+            z-index: 1050;
+        }
+
+        .zoom-controls .btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .zoom-controls .btn:hover {
+            transform: scale(1.1);
+        }
+
+        #zoomLevel {
+            font-size: 0.9rem;
+            padding: 8px 12px;
+        }
+
+        /* ========================================
+           DARK MODE SUPPORT
+           ======================================== */
+        
+        [data-bs-theme="dark"] #dragDropArea {
+            background-color: var(--bs-gray-800,rgb(101, 130, 158)) !important;
+            border-color: var(--bs-gray-600, #6c757d) !important;
+        }
+
+        [data-bs-theme="dark"] #dragDropArea:hover {
+            background-color: var(--bs-primary-bg-subtle) !important;
+            border-color: var(--bs-primary, #0d6efd) !important;
+        }
+
+        [data-bs-theme="dark"] .card {
+            background-color: var(--bs-gray-900,rgb(81, 99, 117));
+        }
+
+        [data-bs-theme="dark"] .card-header {
+            background-color: var(--bs-gray-800,rgb(83, 126, 170));
+        }
+
+        [data-bs-theme="dark"] .modal-header {
+            background-color: var(--bs-gray-800, #343a40);
+        }
+
+        /* ========================================
+           RESPONSIVE MEDIA QUERIES
+           ======================================== */
+        
+        @@keyframes mobileSpinnerRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        @@keyframes skeletonLoading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @@keyframes skeletonSpin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @@media (max-width: 768px) {
+            .step-card {
+                width: 100px !important;
+                height: 120px !important;
+        }
+
+        .step-image-container {
+                height: 60px !important;
+            }
+            
+            .processing-step {
+                margin-bottom: 1rem !important;
+            }
+            
+            .arrow-container {
+                display: none !important;
+            }
+            
+            .step-info h6 {
+                font-size: 0.7rem !important;
+            }
+            
+            .step-info p {
+                font-size: 0.6rem !important;
+            }
+
+            .glow-button {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            .glow-button:not(:disabled):hover {
+                transform: translateY(-2px) scale(1.02);
+            }
+
+            #resultsSection .col-md-8 {
+                max-width: 100%;
+            }
+            
+            #resultsSection .col-6 {
+                margin-bottom: 1rem;
+            }
+            
+            #resultsSection .card-body {
+                height: 150px !important;
+            }
+            
+            #finalResult {
+                font-size: 2rem !important;
+            }
+        }
+    </style>
+    <!-- ========================================
+         JAVASCRIPT SECTION
+         Organized by functionality for easy maintenance
+         ======================================== -->
+    
+    <!-- Global Variables & DOM Elements -->
+    <script>
+        /* ========================================
+           GLOBAL VARIABLES & CONFIGURATION
+           ======================================== */
+        
+        // Application State Variables
+        let selectedFile = null;
+        let currentStep = 0;
+        let processingInterval = null;
+        
+        // API Response Storage
+        window.meterReadingResult = null;
+        window.meterReadingConfidence = null;
+        window.meterReadingReason = null;
+        
+        // Image Zoom Modal Variables
+        let currentZoom = 1;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let translateX = 0;
+        let translateY = 0;
+
+        /* ========================================
+           DOM ELEMENT REFERENCES
+           ======================================== */
+        
+        // Main UI Elements
+        const dragDropArea = document.getElementById('dragDropArea');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const submitBtn = document.getElementById('submitBtn');
+        const processingSteps = document.getElementById('processingSteps');
+        const resultsSection = document.getElementById('resultsSection');
+        const removeFileBtn = document.getElementById('removeFile');
+
+    </script>
+
+    <!-- File Upload & Drag-Drop Functionality -->
+    <script>
+        /* ========================================
+           FILE UPLOAD & DRAG-DROP HANDLING
+           ======================================== */
+        
+        // Initialize drag and drop event listeners
+        function initializeUploadHandlers() {
+        // Drag and drop functionality
+        dragDropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            // Hover styles are handled by CSS
+        });
+
+        dragDropArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            // Hover styles are handled by CSS
+        });
+
+        dragDropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        dragDropArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        // Remove file functionality
+        removeFileBtn.addEventListener('click', () => {
+            resetUpload();
+        });
+
+            // Submit button functionality
+            submitBtn.addEventListener('click', () => {
+                if (!selectedFile) return;
+                startProcessing();
+            });
+        }
+
+        /**
+         * Handles file selection from drag-drop or file input
+         * Parameter: {File} file - The selected image file
+         */
+        function handleFileSelect(file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            selectedFile = file;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewImg = document.getElementById('previewImg');
+                previewImg.src = e.target.result;
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+                document.getElementById('fileType').textContent = file.type;
+                imagePreview.classList.remove('d-none');
+                submitBtn.disabled = false;
+                
+                // Add click event to preview image for zoom modal
+                previewImg.onclick = () => openImageZoomModal(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /**
+         * Resets the upload interface to initial state
+         */
+        function resetUpload() {
+            selectedFile = null;
+            fileInput.value = '';
+            imagePreview.classList.add('d-none');
+            submitBtn.disabled = true;
+            processingSteps.classList.add('d-none');
+            resultsSection.classList.add('d-none');
+            
+            // Clear stored API result
+            window.meterReadingResult = null;
+            window.meterReadingConfidence = null;
+            window.meterReadingReason = null;
+            
+            // Reset result section to skeleton state
+            showResultSkeletons();
+        }
+
+        // Initialize upload handlers when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeUploadHandlers);
+
+    </script>
+
+    <!-- API Communication -->
+    <script>
+        /* ========================================
+           API COMMUNICATION & BACKEND CALLS
+           ======================================== */
+        
+        /**
+         * Starts the processing workflow - both UI animation and API call
+         */
+        async function startProcessing() {
+            // Show processing steps
+            processingSteps.classList.remove('d-none');
+            
+            // Show results section with skeletons
+            resultsSection.classList.remove('d-none');
+            showResultSkeletons();
+            
+            // Update submit button for processing state
+            submitBtn.disabled = true;
+            submitBtn.classList.add('processing');
+            const buttonText = submitBtn.querySelector('.button-text');
+            buttonText.innerHTML = 'ANALYZING...';
+            
+            // Reset all steps
+            resetProcessingSteps();
+            
+            // Start processing simulation
+            currentStep = 0;
+            processingInterval = setInterval(processNextStep, 2000);
+            
+            // Make API call to backend
+            await callMeterReadingAPI();
+        }
+
+        /**
+         * Makes the API call to process the meter image
+         */
+        async function callMeterReadingAPI() {
+            try {
+                console.log('Starting API call to process meter image...');
+                
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                
+                const response = await fetch('http://127.0.0.1:8000/meter_reading_test/upload-meter-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('API Response:', result);
+                
+                // Store the result for when processing animation completes
+                window.meterReadingResult = result.reading || 'Not visible';
+                window.meterReadingConfidence = result.confidence || '0%';
+                window.meterReadingReason = result.reason || null;
+ 
+                console.log('Processed Results:');
+                console.log('Reading:', window.meterReadingResult);
+                console.log('Confidence:', window.meterReadingConfidence);
+                console.log('Reason:', window.meterReadingReason);
+                
+                // If processing animation is already complete, show results immediately
+                if (currentStep >= 5) {
+                    setTimeout(() => {
+                        if (document.getElementById('resultSkeleton').classList.contains('d-none') === false) {
+                            showActualResults();
+                        }
+                    }, 500);
+                }
+                
+            } catch (error) {
+                console.error('Error calling API:', error);
+                
+                // Set error state
+                window.meterReadingResult = 'Error processing image';
+                window.meterReadingConfidence = '0%';
+                window.meterReadingReason = 'API communication failed';
+                
+                // If processing animation is already complete, show error results immediately
+                if (currentStep >= 5) {
+                    setTimeout(() => {
+                        if (document.getElementById('resultSkeleton').classList.contains('d-none') === false) {
+                            showActualResults();
+                        }
+                    }, 500);
+                }
+            }
+        }
+
+    </script>
+
+    <!-- Processing Steps Animation -->
+    <script>
+        /* ========================================
+           PROCESSING STEPS ANIMATION & MANAGEMENT
+           ======================================== */
+        
+        /**
+         * Shows skeleton loading placeholders
+         */
+        function showResultSkeletons() {
+            document.getElementById('finalResultContent').classList.add('d-none');
+            document.getElementById('resultSkeleton').classList.remove('d-none');
+        }
+
+        /**
+         * Hides skeleton loading placeholders and shows actual content
+         */
+        function hideResultSkeletons() {
+            document.getElementById('finalResultContent').classList.remove('d-none');
+            document.getElementById('resultSkeleton').classList.add('d-none');
+        }
+
+        /**
+         * Resets all processing steps to initial state
+         */
+        function resetProcessingSteps() {
+            // Reset desktop steps (1-5)
+            for (let i = 1; i <= 5; i++) {
+                resetDesktopStep(i);
+            }
+            
+            // Reset mobile steps (1-5)
+            for (let i = 1; i <= 5; i++) {
+                resetMobileStep(i);
+            }
+            
+            // Reset arrows
+            document.querySelectorAll('.processing-arrow').forEach(arrow => {
+                arrow.classList.remove('active');
+            });
+        }
+
+        /**
+         * Resets a specific desktop step to initial state
+         * Parameter: {number} stepNumber - The step number to reset
+         */
+        function resetDesktopStep(stepNumber) {
+            const step = document.getElementById(`step${stepNumber}`);
+            if (!step) return;
+
+                    const stepCard = step.querySelector('.step-card');
+                    const stepImage = step.querySelector('.step-image');
+                    const stepIcon = step.querySelector('.step-icon');
+                    const statusText = step.querySelector('.step-status');
+                    const progressBar = step.querySelector('.step-progress');
+                    const processingOverlay = step.querySelector('.processing-overlay');
+                    
+                    // Reset step state
+                    step.classList.remove('active', 'completed');
+                    stepCard.classList.remove('processing', 'completed');
+                    stepImage.classList.remove('processing', 'completed');
+                    
+                    // Reset image and icon
+                    stepImage.classList.add('d-none');
+            stepImage.src = '';
+                    stepIcon.classList.remove('d-none', 'text-success', 'text-primary');
+                    stepIcon.classList.add('text-muted');
+                    
+                    // Reset status and progress
+                statusText.textContent = 'Ready';
+                    statusText.classList.remove('text-success', 'text-primary');
+                statusText.classList.add('text-muted');
+                    progressBar.classList.add('d-none');
+                    progressBar.classList.remove('active');
+                    progressBar.querySelector('.progress-bar').style.width = '0%';
+                    
+                    // Reset processing overlay
+                    processingOverlay.classList.add('d-none');
+        }
+
+        /**
+         * Resets a specific mobile step to initial state
+         * Parameter: {number} stepNumber - The step number to reset
+         */
+        function resetMobileStep(stepNumber) {
+            const mobileStep = document.getElementById(`mobileStep${stepNumber}`);
+            if (!mobileStep) return;
+
+                    const mobileImage = mobileStep.querySelector('.mobile-step-image');
+                    const mobileIcon = mobileStep.querySelector('.mobile-step-icon-fallback');
+                    const mobileStatus = mobileStep.querySelector('.mobile-step-status');
+                    const mobileProgress = mobileStep.querySelector('.mobile-step-progress');
+                    const mobileOverlay = mobileStep.querySelector('.mobile-processing-overlay');
+                    const mobileSuccessIcon = mobileStep.querySelector('.mobile-success-icon');
+                    
+                    // Reset mobile step state
+                    mobileStep.classList.remove('active', 'completed');
+                    
+                    // Reset mobile image and icon
+                    mobileImage.classList.add('d-none');
+                    mobileImage.src = '';
+                    mobileIcon.classList.remove('d-none');
+                    
+                    // Reset mobile status and progress
+                    mobileStatus.textContent = 'Ready';
+                    mobileProgress.classList.add('d-none');
+                    mobileProgress.querySelector('.progress-bar').style.width = '0%';
+                    
+                    // Reset mobile overlay and success icon
+                    mobileOverlay.classList.add('d-none');
+                    mobileSuccessIcon.classList.add('d-none');
+        }
+
+        /**
+         * Processes the next step in the animation sequence
+         */
+        function processNextStep() {
+            currentStep++;
+            
+            if (currentStep <= 5) {
+                // Mark previous steps as completed
+                for (let i = 1; i < currentStep; i++) {
+                    completeStep(i);
+                }
+                
+                // Process current step for both desktop and mobile
+                processDesktopStep(currentStep);
+                processMobileStep(currentStep);
+                
+                // Update arrows
+                updateProcessingArrows();
+            }
+            
+            // Complete processing after all steps
+            if (currentStep > 5) {
+                clearInterval(processingInterval);
+                completeProcessing();
+            }
+        }
+
+        /**
+         * Processes a desktop step animation
+         * Parameter: {number} stepNumber - The step number to process
+         */
+        function processDesktopStep(stepNumber) {
+            const step = document.getElementById(`step${stepNumber}`);
+            if (!step) return;
+
+                    const stepCard = step.querySelector('.step-card');
+                    const stepImage = step.querySelector('.step-image');
+                    const stepIcon = step.querySelector('.step-icon');
+                    const statusText = step.querySelector('.step-status');
+                    const progressBar = step.querySelector('.step-progress');
+                    const processingOverlay = step.querySelector('.processing-overlay');
+                
+                // Activate current step
+                    step.classList.add('active');
+                    stepCard.classList.add('processing');
+                    
+                    // Show image in current step
+                    if (selectedFile) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            stepImage.src = e.target.result;
+                            stepImage.classList.remove('d-none');
+                            stepImage.classList.add('processing');
+                            stepIcon.classList.add('d-none');
+                            
+                            // Apply step-specific image effects
+                            setTimeout(() => {
+                        applyStepImageEffect(stepNumber, stepImage);
+                            }, 500);
+                        };
+                        reader.readAsDataURL(selectedFile);
+                    } else {
+                        stepIcon.classList.add('d-none');
+                    }
+                    
+                    // Show processing overlay
+                    processingOverlay.classList.remove('d-none');
+                    
+                    // Update status and progress
+                statusText.textContent = 'Processing...';
+                statusText.classList.remove('text-muted');
+                statusText.classList.add('text-primary');
+                    progressBar.classList.remove('d-none');
+                    progressBar.classList.add('active');
+                    
+                    // Animate progress bar
+            animateProgressBar(progressBar, stepNumber);
+        }
+
+        /**
+         * Processes a mobile step animation
+         * Parameter: {number} stepNumber - The step number to process
+         */
+        function processMobileStep(stepNumber) {
+            const mobileStep = document.getElementById(`mobileStep${stepNumber}`);
+            if (!mobileStep) return;
+
+                    const mobileImage = mobileStep.querySelector('.mobile-step-image');
+                    const mobileIcon = mobileStep.querySelector('.mobile-step-icon-fallback');
+                    const mobileStatus = mobileStep.querySelector('.mobile-step-status');
+                    const mobileProgress = mobileStep.querySelector('.mobile-step-progress');
+                    const mobileOverlay = mobileStep.querySelector('.mobile-processing-overlay');
+                    
+                    // Activate mobile step
+                    mobileStep.classList.add('active');
+                    
+                    // Show image in mobile step
+                    if (selectedFile) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            mobileImage.src = e.target.result;
+                            mobileImage.classList.remove('d-none');
+                            mobileIcon.classList.add('d-none');
+                        };
+                        reader.readAsDataURL(selectedFile);
+                    } else {
+                        mobileIcon.classList.add('d-none');
+                    }
+                    
+                    // Show mobile processing overlay
+                    mobileOverlay.classList.remove('d-none');
+                    
+                    // Update mobile status and progress
+                    mobileStatus.textContent = 'Processing...';
+                    mobileProgress.classList.remove('d-none');
+                    
+                    // Animate mobile progress bar
+            animateProgressBar(mobileProgress, stepNumber);
+                }
+                
+        /**
+         * Updates processing arrows animation
+         */
+        function updateProcessingArrows() {
+                const arrows = document.querySelectorAll('.processing-arrow');
+                if (currentStep > 1 && arrows[currentStep - 2]) {
+                    arrows[currentStep - 2].classList.add('active');
+                }
+            }
+            
+        /**
+         * Completes a specific processing step
+         * Parameter: {number} stepNumber - The step number to complete
+         */
+        function completeStep(stepNumber) {
+            completeDesktopStep(stepNumber);
+            completeMobileStep(stepNumber);
+        }
+
+        /**
+         * Completes a desktop step
+         * Parameter: {number} stepNumber - The step number to complete
+         */
+        function completeDesktopStep(stepNumber) {
+            const step = document.getElementById(`step${stepNumber}`);
+            if (!step) return;
+
+                const stepCard = step.querySelector('.step-card');
+                const stepImage = step.querySelector('.step-image');
+                const stepIcon = step.querySelector('.step-icon');
+                const statusText = step.querySelector('.step-status');
+                const progressBar = step.querySelector('.step-progress');
+                const processingOverlay = step.querySelector('.processing-overlay');
+                
+                // Mark as completed
+                step.classList.remove('active');
+                step.classList.add('completed');
+                stepCard.classList.remove('processing');
+                stepCard.classList.add('completed');
+                stepImage.classList.remove('processing');
+                stepImage.classList.add('completed');
+                
+                // Hide processing overlay
+                processingOverlay.classList.add('d-none');
+                
+                // Always keep icon hidden when image is present
+                stepIcon.classList.add('d-none');
+                
+                // Update status
+                statusText.textContent = 'Completed';
+                statusText.classList.remove('text-primary');
+                statusText.classList.add('text-success');
+                
+                // Complete progress bar
+                progressBar.classList.remove('active');
+                progressBar.querySelector('.progress-bar').style.width = '100%';
+            }
+            
+        /**
+         * Completes a mobile step
+         * Parameter: {number} stepNumber - The step number to complete
+         */
+        function completeMobileStep(stepNumber) {
+            const mobileStep = document.getElementById(`mobileStep${stepNumber}`);
+            if (!mobileStep) return;
+
+                const mobileStatus = mobileStep.querySelector('.mobile-step-status');
+                const mobileProgress = mobileStep.querySelector('.mobile-step-progress');
+                const mobileOverlay = mobileStep.querySelector('.mobile-processing-overlay');
+                const mobileSuccessIcon = mobileStep.querySelector('.mobile-success-icon');
+                
+                // Mark mobile step as completed
+                mobileStep.classList.remove('active');
+                mobileStep.classList.add('completed');
+                
+                // Hide mobile processing overlay
+                mobileOverlay.classList.add('d-none');
+                
+                // Show success icon
+                mobileSuccessIcon.classList.remove('d-none');
+                
+                // Update mobile status
+                mobileStatus.textContent = 'Completed';
+                
+                // Complete mobile progress bar
+                mobileProgress.querySelector('.progress-bar').style.width = '100%';
+        }
+
+        /**
+         * Animates a progress bar
+         * Parameter: {HTMLElement} progressBar - The progress bar element
+         * Parameter: {number} stepNumber - The step number for timing
+         */
+        function animateProgressBar(progressBar, stepNumber) {
+            const progressBarFill = progressBar.querySelector('.progress-bar');
+            let progress = 0;
+            const duration = 1800; // 1.8 seconds
+            const interval = 50;
+            const increment = (100 / (duration / interval));
+            
+            const progressInterval = setInterval(() => {
+                progress += increment;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                }
+                progressBarFill.style.width = progress + '%';
+            }, interval);
+        }
+
+        /**
+         * Applies step-specific image effects
+         * Parameter: {number} stepNumber - The step number
+         * Parameter: {HTMLElement} imageElement - The image element
+         */
+        function applyStepImageEffect(stepNumber, imageElement) {
+            switch(stepNumber) {
+                case 1:
+                    // Original image - no effect needed
+                    break;
+                case 2:
+                    // YOLO Crop - simulate cropping effect
+                    setTimeout(() => {
+                        imageElement.style.transform = 'scale(1.2)';
+                        imageElement.style.filter = 'contrast(1.1)';
+                    }, 1000);
+                    break;
+                case 3:
+                    // Paddle OCR - enhance for text detection
+                    setTimeout(() => {
+                        imageElement.style.filter = 'contrast(1.3) brightness(1.1) grayscale(0.2)';
+                    }, 1000);
+                    break;
+                case 4:
+                    // Easy OCR - further enhancement
+                    setTimeout(() => {
+                        imageElement.style.filter = 'contrast(1.4) brightness(1.2) saturate(0.8)';
+                    }, 1000);
+                    break;
+                case 5:
+                    // Surya OCR - final processing
+                    setTimeout(() => {
+                        imageElement.style.filter = 'contrast(1.5) brightness(1.3) saturate(0.6)';
+                        imageElement.style.border = '2px solid #198754';
+                    }, 1000);
+                    break;
+            }
+        }
+
+        /**
+         * Completes the entire processing workflow
+         */
+        function completeProcessing() {
+            // Complete the final step
+            completeStep(5);
+            
+            // Mark all arrows as active with staggered animation
+            const arrows = document.querySelectorAll('.processing-arrow');
+            arrows.forEach((arrow, index) => {
+                setTimeout(() => {
+                    arrow.classList.add('active');
+                }, index * 200);
+            });
+            
+            // Add completion celebration effect
+            setTimeout(() => {
+                addCompletionCelebration();
+            }, 500);
+            
+            // Check if API response is ready, if not wait for it
+            setTimeout(() => {
+                checkAndShowResults();
+            }, 1000);
+        }
+
+        /**
+         * Adds celebration animation to completed steps
+         */
+        function addCompletionCelebration() {
+            for (let i = 1; i <= 5; i++) {
+                const step = document.getElementById(`step${i}`);
+                const stepCard = step.querySelector('.step-card');
+                
+                // Add celebration pulse
+                stepCard.style.animation = 'celebrationPulse 0.6s ease-out';
+                
+                // Remove animation after completion
+                setTimeout(() => {
+                    stepCard.style.animation = '';
+                }, 600);
+            }
+        }
+
+        /**
+         * Checks if API results are ready and shows them
+         */
+        function checkAndShowResults() {
+            if (window.meterReadingResult !== null) {
+                showActualResults();
+            } else {
+                // API still processing, wait a bit more
+                setTimeout(checkAndShowResults, 500);
+            }
+        }
+    </script>
+
+    <!-- Results Display & Management -->
+    <script>
+        /* ========================================
+           RESULTS DISPLAY & MANAGEMENT
+           ======================================== */
+        
+        /**
+         * Shows the actual results from API response
+         */
+        function showActualResults() {
+            // Hide skeletons and show actual content
+            hideResultSkeletons();
+            
+            // Animate final result number with actual data
+            animateResultNumber();
+            
+            // Reset submit button
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('processing');
+            const buttonText = submitBtn.querySelector('.button-text');
+            buttonText.textContent = 'ANALYZE READING';
+        }
+
+        /**
+         * Animates and displays the final result number
+         */
+        function animateResultNumber() {
+            const resultElement = document.getElementById('finalResult');
+            const confidenceElement = document.getElementById('confidenceDisplay');
+            const reasonDisplay = document.getElementById('reasonDisplay');
+            const reasonText = document.getElementById('reasonText');
+            const apiResult = window.meterReadingResult || 'Not visible';
+            const apiConfidence = window.meterReadingConfidence || '0%';
+            const apiReason = window.meterReadingReason;
+            
+            // Show the exact result from backend without any modification
+            resultElement.textContent = apiResult;
+            
+            // Update confidence display
+            confidenceElement.textContent = apiConfidence;
+            
+            // Set confidence badge color based on percentage
+            const confidenceValue = parseInt(apiConfidence.replace('%', ''));
+            confidenceElement.className = 'badge';
+            
+            if (confidenceValue >= 80) {
+                confidenceElement.classList.add('bg-success');
+            } else if (confidenceValue >= 60) {
+                confidenceElement.classList.add('bg-warning');
+            } else {
+                confidenceElement.classList.add('bg-danger');
+            }
+            
+            // Show reason if available and result is "Not visible"
+            if (apiReason && apiResult.toLowerCase().includes('not visible')) {
+                reasonText.textContent = `Reason: ${apiReason}`;
+                reasonDisplay.classList.remove('d-none');
+            } else {
+                reasonDisplay.classList.add('d-none');
+            }
+            
+            // Add glow effect for any result
+            resultElement.style.textShadow = '0 0 20px rgba(13, 110, 253, 0.5)';
+            setTimeout(() => {
+                resultElement.style.textShadow = '';
+            }, 1000);
+        }
+    </script>
+
+    <!-- Image Zoom Modal Functionality -->
+    <script>
+        /* ========================================
+           IMAGE ZOOM MODAL FUNCTIONALITY
+           ======================================== */
+        
+        /**
+         * Opens the image zoom modal
+         * Parameter: {string} imageSrc - The image source URL
+         */
+        function openImageZoomModal(imageSrc) {
+            const modalImage = document.getElementById('modalImage');
+            const modal = new bootstrap.Modal(document.getElementById('imageZoomModal'));
+            
+            modalImage.src = imageSrc;
+            resetZoom();
+            modal.show();
+            
+            // Initialize zoom controls after modal is shown
+            setTimeout(initializeZoomControls, 300);
+        }
+
+        /**
+         * Initializes zoom controls for the modal
+         */
+        function initializeZoomControls() {
+            const modalImage = document.getElementById('modalImage');
+            const zoomInBtn = document.getElementById('zoomInBtn');
+            const zoomOutBtn = document.getElementById('zoomOutBtn');
+            const resetZoomBtn = document.getElementById('resetZoomBtn');
+            const container = document.getElementById('imageZoomContainer');
+
+            // Zoom controls
+            zoomInBtn.onclick = () => zoomImage(1.2);
+            zoomOutBtn.onclick = () => zoomImage(0.8);
+            resetZoomBtn.onclick = resetZoom;
+
+            // Mouse wheel zoom
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+                zoomImage(zoomFactor);
+            });
+
+            // Pan functionality
+            modalImage.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+
+            // Touch support for mobile
+            modalImage.addEventListener('touchstart', startDragTouch);
+            modalImage.addEventListener('touchmove', dragTouch);
+            modalImage.addEventListener('touchend', endDrag);
+        }
+
+        /**
+         * Zooms the image by a factor
+         * Parameter: {number} factor - The zoom factor
+         */
+        function zoomImage(factor) {
+            currentZoom *= factor;
+            currentZoom = Math.max(0.5, Math.min(currentZoom, 5)); // Limit zoom between 50% and 500%
+            
+            updateImageTransform();
+            updateZoomLevel();
+        }
+
+        /**
+         * Resets zoom to default
+         */
+        function resetZoom() {
+            currentZoom = 1;
+            translateX = 0;
+            translateY = 0;
+            updateImageTransform();
+            updateZoomLevel();
+        }
+
+        /**
+         * Updates the image transform
+         */
+        function updateImageTransform() {
+            const modalImage = document.getElementById('modalImage');
+            modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+        }
+
+        /**
+         * Updates the zoom level display
+         */
+        function updateZoomLevel() {
+            const zoomLevel = document.getElementById('zoomLevel');
+            zoomLevel.textContent = Math.round(currentZoom * 100) + '%';
+        }
+
+        /**
+         * Starts dragging with mouse
+         * Parameter: {MouseEvent} e - The mouse event
+         */
+        function startDrag(e) {
+            if (currentZoom <= 1) return;
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            document.getElementById('modalImage').style.cursor = 'grabbing';
+        }
+
+        /**
+         * Starts dragging with touch
+         * Parameter: {TouchEvent} e - The touch event
+         */
+        function startDragTouch(e) {
+            if (currentZoom <= 1) return;
+            isDragging = true;
+            const touch = e.touches[0];
+            startX = touch.clientX - translateX;
+            startY = touch.clientY - translateY;
+        }
+
+        /**
+         * Handles dragging with mouse
+         * Parameter: {MouseEvent} e - The mouse event
+         */
+        function drag(e) {
+            if (!isDragging || currentZoom <= 1) return;
+            e.preventDefault();
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateImageTransform();
+        }
+
+        /**
+         * Handles dragging with touch
+         * Parameter: {TouchEvent} e - The touch event
+         */
+        function dragTouch(e) {
+            if (!isDragging || currentZoom <= 1) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            translateX = touch.clientX - startX;
+            translateY = touch.clientY - startY;
+            updateImageTransform();
+        }
+
+        /**
+         * Ends dragging
+         */
+        function endDrag() {
+            isDragging = false;
+            document.getElementById('modalImage').style.cursor = 'grab';
+        }
+
+        // Reset zoom when modal is closed
+        document.getElementById('imageZoomModal').addEventListener('hidden.bs.modal', resetZoom);
+    </script>
+}
