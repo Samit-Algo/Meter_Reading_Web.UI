@@ -10,8 +10,16 @@ using Meter_Reading_Test.Models;
 
 namespace Meter_Reading_Test.Pages.Authenitcation
 {
+    /// <summary>
+    /// Sign In Page Model - Handles user authentication
+    /// Manages login form submission and JWT token storage
+    /// </summary>
     public class SignInModel : PageModel
     {
+        // ========================================
+        // DEPENDENCIES & CONFIGURATION
+        // Injected services for HTTP communication and logging
+        // ========================================
         private readonly HttpClient _httpClient;
         private readonly ILogger<SignInModel> _logger;
         private readonly ApiSettings _apiSettings;
@@ -23,31 +31,66 @@ namespace Meter_Reading_Test.Pages.Authenitcation
             _apiSettings = apiSettings.Value;
         }
 
+        // ========================================
+        // FORM PROPERTIES
+        // Data-bound properties for login form
+        // ========================================
+
+        /// <summary>
+        /// Username input - bound to form field
+        /// Required for authentication
+        /// </summary>
         [BindProperty]
         [Required(ErrorMessage = "Username is required")]
         public string Username { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Password input - bound to form field
+        /// Required for authentication, masked in UI
+        /// </summary>
         [BindProperty]
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Remember Me checkbox - bound to form field
+        /// Determines session persistence (currently stored in cookie)
+        /// </summary>
         [BindProperty]
         public bool RememberMe { get; set; }
 
+        /// <summary>
+        /// Error message for display to user
+        /// Populated when authentication fails
+        /// </summary>
         public string? ErrorMessage { get; set; }
 
+        // ========================================
+        // PAGE HANDLERS
+        // HTTP request handlers for page operations
+        // ========================================
+
+        /// <summary>
+        /// GET request handler - Displays sign-in page
+        /// Redirects to admin page if user is already authenticated
+        /// </summary>
         public void OnGet()
         {
-            // Check if user is already authenticated
+            // Check if user already has valid authentication cookie
             if (AuthHelper.IsAuthenticated(HttpContext))
             {
                 Response.Redirect("/admin/Admin");
             }
         }
 
+        /// <summary>
+        /// POST request handler - Processes login form submission
+        /// Authenticates with backend API and stores JWT token on success
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
+            // Validate form data before processing
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -55,7 +98,8 @@ namespace Meter_Reading_Test.Pages.Authenitcation
 
             try
             {
-                // Prepare form data for FastAPI backend
+                // Prepare form data for OAuth2 password flow
+                // FastAPI expects form-urlencoded data for token endpoint
                 var formData = new List<KeyValuePair<string, string>>
                 {
                     new KeyValuePair<string, string>("username", Username),
@@ -64,11 +108,12 @@ namespace Meter_Reading_Test.Pages.Authenitcation
 
                 var formContent = new FormUrlEncodedContent(formData);
 
-                // Send login request to FastAPI backend
+                // Send authentication request to backend
                 var response = await _httpClient.PostAsync($"{_apiSettings.BackendBaseUrl}{_apiSettings.LoginEndpoint}", formContent);
 
                 if (response.IsSuccessStatusCode)
                 {
+                    // Parse successful authentication response
                     var responseContent = await response.Content.ReadAsStringAsync();
                     var loginResponse = JsonSerializer.Deserialize<LoginResponse>(responseContent, new JsonSerializerOptions
                     {
@@ -77,25 +122,28 @@ namespace Meter_Reading_Test.Pages.Authenitcation
 
                     if (loginResponse?.AccessToken != null)
                     {
-                        // Store JWT token in secure cookie
+                        // Store JWT token in secure HTTP-only cookie
                         AuthHelper.SetAuthCookie(HttpContext, loginResponse.AccessToken);
 
-                        // Redirect to admin page
+                        // Redirect to admin dashboard
                         return RedirectToPage("/admin/Admin");
                     }
                     else
                     {
+                        // Successful response but no token - unexpected
                         ErrorMessage = "Invalid response from authentication server.";
                         return Page();
                     }
                 }
                 else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
+                    // Authentication failed - invalid credentials
                     ErrorMessage = "Invalid username or password. Please try again.";
                     return Page();
                 }
                 else
                 {
+                    // Other HTTP error from backend
                     ErrorMessage = "Authentication service is currently unavailable. Please try again later.";
                     _logger.LogError("Login failed with status code: {StatusCode}", response.StatusCode);
                     return Page();
@@ -103,24 +151,28 @@ namespace Meter_Reading_Test.Pages.Authenitcation
             }
             catch (HttpRequestException ex)
             {
+                // Network connectivity issue
                 ErrorMessage = "Unable to connect to authentication service. Please check your internet connection.";
                 _logger.LogError(ex, "HTTP request exception during login");
                 return Page();
             }
             catch (TaskCanceledException ex)
             {
+                // Request timeout
                 ErrorMessage = "Login request timed out. Please try again.";
                 _logger.LogError(ex, "Login request timed out");
                 return Page();
             }
             catch (JsonException ex)
             {
+                // Invalid JSON response from backend
                 ErrorMessage = "Invalid response from authentication server.";
                 _logger.LogError(ex, "JSON parsing error during login");
                 return Page();
             }
             catch (Exception ex)
             {
+                // Catch-all for unexpected errors
                 ErrorMessage = "An unexpected error occurred during sign in. Please try again.";
                 _logger.LogError(ex, "Unexpected error during login");
                 return Page();
@@ -128,14 +180,35 @@ namespace Meter_Reading_Test.Pages.Authenitcation
         }
     }
 
+    // ========================================
+    // DATA TRANSFER OBJECTS (DTOs)
+    // Models for API communication
+    // ========================================
+
+    /// <summary>
+    /// Login Response Model - Received from authentication API
+    /// Contains JWT access token and metadata (token type, expiration)
+    /// </summary>
     public class LoginResponse
     {
+        /// <summary>
+        /// JWT access token for authenticated requests
+        /// Stored in secure HTTP-only cookie
+        /// </summary>
         [JsonPropertyName("access_token")]
         public string? AccessToken { get; set; }
         
+        /// <summary>
+        /// Token type (typically "Bearer")
+        /// Used in Authorization header format
+        /// </summary>
         [JsonPropertyName("token_type")]
         public string? TokenType { get; set; }
         
+        /// <summary>
+        /// Token expiration time in seconds
+        /// Used to determine when to refresh token
+        /// </summary>
         [JsonPropertyName("expires_in")]
         public int? ExpiresIn { get; set; }
     }

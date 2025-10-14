@@ -31,3 +31,4 @@ C:\Algo Orange\Meter_Reading_Test\Meter_Reading_Test\obj\Debug\net8.0\refint\Met
 C:\Algo Orange\Meter_Reading_Test\Meter_Reading_Test\obj\Debug\net8.0\Meter_Reading_Test.pdb
 C:\Algo Orange\Meter_Reading_Test\Meter_Reading_Test\obj\Debug\net8.0\Meter_Reading_Test.genruntimeconfig.cache
 C:\Algo Orange\Meter_Reading_Test\Meter_Reading_Test\obj\Debug\net8.0\ref\Meter_Reading_Test.dll
+C:\Algo Orange\Meter_Reading_Test\Meter_Reading_Test\obj\Debug\net8.0\Meter_Reading_Test.sourcelink.json
