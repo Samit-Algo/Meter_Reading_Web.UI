@@ -33,8 +33,8 @@
                 <div class="card-body">
                     <!-- Drag and Drop Area -->
                     <!-- Dropzone implementation with theme support -->
-                    <div class="dropzone dropzone-single p-0 dz-clickable" id="dragDropArea" data-dropzone="data-dropzone" data-options='{"maxFiles":1,"maxFilesize":10,"acceptedFiles":"image/*","dictDefaultMessage":"Choose or Drop a file here"}'>
-                        <div class="dz-message" data-dz-message="data-dz-message">
+                    <div class="dropzone dropzone-single p-0 dz-clickable min-vh-20" id="dragDropArea" data-dropzone="data-dropzone" data-options='{"maxFiles":1,"maxFilesize":10,"acceptedFiles":"image/*","dictDefaultMessage":"Choose or Drop a file here"}'>
+                        <div class="dz-message d-flex align-items-center justify-content-center" data-dz-message="data-dz-message">
                             <div class="dz-message-text">
                                 <img class="me-2" src="~/assets/img/icons/cloud-upload.svg" width="25" alt="">
                                 Drop your meter image here
@@ -482,13 +482,21 @@
    DRAG & DROP UPLOAD STYLES (DROPZONE)
    Styles for Dropzone file upload with theme support
    ======================================== */
+    
+    /* Custom minimum height utility class */
+    .min-vh-20 {
+        min-height: 10vh !important;
+    }
+
     #dragDropArea {
         transition: all 0.3s ease;
+        min-height: 100px;
     }
 
 #dragDropArea .dz-message {
     margin: 0;
     padding: 2rem;
+    min-height: 100px;
 }
 
 #dragDropArea .dz-message-text {
