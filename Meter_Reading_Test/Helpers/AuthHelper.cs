@@ -44,8 +44,8 @@ namespace Meter_Reading_Test.Helpers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,        // Prevents JavaScript access (XSS protection)
-                Secure = true,          // Requires HTTPS transmission (in production)
-                SameSite = SameSiteMode.Strict,  // Prevents CSRF attacks
+                Secure = context.Request.IsHttps,  // Only require HTTPS when actually using HTTPS
+                SameSite = SameSiteMode.None,      // Allow cross-origin requests (needed for separate EC2 instances)
                 Expires = DateTime.UtcNow.AddHours(CookieExpiryHours)  // Auto-expiration
             };
 
@@ -75,8 +75,8 @@ namespace Meter_Reading_Test.Helpers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
+                Secure = context.Request.IsHttps,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(-1)  // Past date triggers deletion
             };
 

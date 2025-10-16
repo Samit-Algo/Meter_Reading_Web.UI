@@ -6,6 +6,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Configure CORS for cross-origin requests
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        var frontendUrls = builder.Configuration.GetSection("FrontendUrls").Get<string[]>() ?? new[] { "http://localhost:5000" };
+        policy.WithOrigins(frontendUrls)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();  // Important for cookies
+    });
+});
+
 // Configure API settings
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
@@ -33,6 +46,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Use CORS policy
+app.UseCors("AllowFrontend");
 
 app.UseRouting();
 
