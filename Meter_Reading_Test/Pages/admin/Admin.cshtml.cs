@@ -40,6 +40,10 @@ namespace Meter_Reading_Test.Pages
         public string? ExtractedReading { get; set; }
         public string? ErrorMessage { get; set; }
         public bool IsUploading { get; set; }
+        
+        // API Configuration for client-side JavaScript
+        public string ApiBaseUrl => _apiSettings.BackendBaseUrl;
+        public string ExtractMeterEndpoint => _apiSettings.ExtractMeterEndpoint;
 
         // ========================================
         // PAGE HANDLERS
@@ -148,7 +152,9 @@ namespace Meter_Reading_Test.Pages
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 // Send POST request to FastAPI backend
-                var response = await _httpClient.PostAsync($"{_apiSettings.BackendBaseUrl}{_apiSettings.ExtractMeterEndpoint}", formData);
+                var extractUrl = $"{_apiSettings.BackendBaseUrl}{_apiSettings.ExtractMeterEndpoint}";
+                _logger.LogInformation("Attempting to extract meter reading at URL: {ExtractUrl}", extractUrl);
+                var response = await _httpClient.PostAsync(extractUrl, formData);
 
                 if (response.IsSuccessStatusCode)
                 {

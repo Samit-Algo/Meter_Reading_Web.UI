@@ -32,16 +32,21 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <!-- Drag and Drop Area -->
-                    <div class="rounded-3 py-3 px-4 text-center d-flex align-items-center justify-content-center" 
-                         id="dragDropArea" 
-                         style="cursor: pointer; transition: all 0.3s ease; min-height: 120px; max-height: 120px;">
-                        <div class="d-flex align-items-center">
-                            <i class="uil uil-cloud-upload text-primary me-3" style="font-size: 2rem;"></i>
-                            <div class="text-start">
-                                <h6 class="mb-1">Drop your meter image here</h6>
-                                <p class="text-muted mb-0 small">or <span class="text-primary">click to browse files</span></p>
+                    <!-- Dropzone implementation with theme support -->
+                    <div class="dropzone dropzone-single p-0 dz-clickable" id="dragDropArea" data-dropzone="data-dropzone" data-options='{"maxFiles":1,"maxFilesize":10,"acceptedFiles":"image/*","dictDefaultMessage":"Choose or Drop a file here"}'>
+                        <div class="dz-message" data-dz-message="data-dz-message">
+                            <div class="dz-message-text">
+                                <img class="me-2" src="~/assets/img/icons/cloud-upload.svg" width="25" alt="">
+                                Drop your meter image here
                             </div>
+                            <button type="button" class="btn dz-upload-btn border-0 position-absolute z-5 bg-black bg-opacity-50 text-white mt-3 ms-3 px-3" data-dz-message="data-dz-message">
+                                Change Picture
+                                <svg class="svg-inline--fa fa-camera fs-10 ms-1" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="camera" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                    <path fill="currentColor" d="M149.1 64.8L138.7 96H64C28.7 96 0 124.7 0 160V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H373.3L362.9 64.8C356.4 45.2 338.1 32 317.4 32H194.6c-20.7 0-39 13.2-45.5 32.8zM256 192a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"></path>
+                                </svg>
+                            </button>
                         </div>
+                        <div class="dz-preview d-block m-0"></div>
                         <input type="file" id="fileInput" accept="image/*" class="d-none" />
                     </div>
                     
@@ -474,14 +479,24 @@
 @section Scripts {
 <style>
 /* ========================================
-   DRAG & DROP UPLOAD STYLES
-   Styles for file upload area with drag-drop functionality
+   DRAG & DROP UPLOAD STYLES (DROPZONE)
+   Styles for Dropzone file upload with theme support
    ======================================== */
     #dragDropArea {
-        background-color: var(--bs-gray-100, #e9ecef) !important;
-        border: 2px dashed var(--bs-gray-300, #adb5bd) !important;
-        color: var(--bs-body-color);
         transition: all 0.3s ease;
+    }
+
+#dragDropArea .dz-message {
+    margin: 0;
+    padding: 2rem;
+}
+
+#dragDropArea .dz-message-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--bs-body-color);
     }
 
     #dragDropArea:hover {
@@ -1037,10 +1052,10 @@
 
 /* ========================================
    DARK MODE SUPPORT
-   Styles for dark theme compatibility
+   Styles for dark theme compatibility with Dropzone
    ======================================== */
     [data-bs-theme="dark"] #dragDropArea {
-        background-color: var(--bs-gray-800,rgb(101, 130, 158)) !important;
+    background-color: var(--bs-gray-800, rgb(52, 58, 64)) !important;
         border-color: var(--bs-gray-600, #6c757d) !important;
     }
 
@@ -1049,12 +1064,16 @@
         border-color: var(--bs-primary, #0d6efd) !important;
     }
 
+[data-bs-theme="dark"] #dragDropArea .dz-message-text {
+    color: var(--bs-gray-300, #adb5bd);
+}
+
     [data-bs-theme="dark"] .card {
-        background-color: var(--bs-gray-900,rgb(81, 99, 117));
+    background-color: var(--bs-gray-900, rgb(33, 37, 41));
     }
 
     [data-bs-theme="dark"] .card-header {
-        background-color: var(--bs-gray-800,rgb(83, 126, 170));
+    background-color: var(--bs-gray-800, rgb(52, 58, 64));
     }
 
     [data-bs-theme="dark"] .modal-header {
@@ -1253,6 +1272,12 @@
     let currentStep = 0;
     let processingInterval = null;
     
+/* API Configuration from server-side settings */
+    const API_CONFIG = {
+        baseUrl: '@Model.ApiBaseUrl',
+        extractEndpoint: '@Model.ExtractMeterEndpoint'
+    };
+    
 /* API response storage - holds the OCR results from backend */
     window.meterReadingResult = null;
     window.meterReadingConfidence = null;
@@ -1403,14 +1428,13 @@
 /* Call the backend API to process meter image */
     async function callMeterReadingAPI() {
         try {
-            console.log('Starting API call to process meter image...');
-            
         /* Prepare form data with uploaded file */
             const formData = new FormData();
             formData.append('file', selectedFile);
             
         /* Send POST request to backend OCR endpoint */
-            const response = await fetch('http://127.0.0.1:8000/meter_reading_test/upload-meter-image', {
+            const apiUrl = `${API_CONFIG.baseUrl}${API_CONFIG.extractEndpoint}`;
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 body: formData
             });
@@ -1421,18 +1445,12 @@
             
         /* Parse JSON response from backend */
             const result = await response.json();
-            console.log('API Response:', result);
             
         /* Store results globally for display after animation completes */
             window.meterReadingResult = result.reading || 'Not visible';
             window.meterReadingConfidence = result.confidence || '0%';
             window.meterReadingReason = result.reason || null;
 
-            console.log('Processed Results:');
-            console.log('Reading:', window.meterReadingResult);
-            console.log('Confidence:', window.meterReadingConfidence);
-            console.log('Reason:', window.meterReadingReason);
-            
         /* If animation is complete, show results immediately */
             if (currentStep >= 5) {
                 setTimeout(() => {
@@ -1443,8 +1461,6 @@
             }
             
         } catch (error) {
-            console.error('Error calling API:', error);
-            
         /* Set error state for display */
             window.meterReadingResult = 'Error processing image';
             window.meterReadingConfidence = '0%';

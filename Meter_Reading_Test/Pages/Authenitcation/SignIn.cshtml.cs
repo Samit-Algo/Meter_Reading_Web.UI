@@ -29,6 +29,10 @@ namespace Meter_Reading_Test.Pages.Authenitcation
             _httpClient = httpClient;
             _logger = logger;
             _apiSettings = apiSettings.Value;
+            
+            // Log configuration values for debugging
+            _logger.LogInformation("API Configuration loaded - BackendBaseUrl: {BackendBaseUrl}, LoginEndpoint: {LoginEndpoint}", 
+                _apiSettings.BackendBaseUrl, _apiSettings.LoginEndpoint);
         }
 
         // ========================================
@@ -109,7 +113,9 @@ namespace Meter_Reading_Test.Pages.Authenitcation
                 var formContent = new FormUrlEncodedContent(formData);
 
                 // Send authentication request to backend
-                var response = await _httpClient.PostAsync($"{_apiSettings.BackendBaseUrl}{_apiSettings.LoginEndpoint}", formContent);
+                var loginUrl = $"{_apiSettings.BackendBaseUrl}{_apiSettings.LoginEndpoint}";
+                _logger.LogInformation("Attempting to authenticate at URL: {LoginUrl}", loginUrl);
+                var response = await _httpClient.PostAsync(loginUrl, formContent);
 
                 if (response.IsSuccessStatusCode)
                 {
