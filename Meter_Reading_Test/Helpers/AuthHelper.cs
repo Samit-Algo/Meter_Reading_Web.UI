@@ -46,7 +46,7 @@ namespace Meter_Reading_Test.Helpers
             {
                 HttpOnly = true,        // Prevents JavaScript access (XSS protection)
                 Secure = context.Request.IsHttps,  // Only require HTTPS when actually using HTTPS
-                SameSite = SameSiteMode.None,      // Allow cross-origin requests (needed for separate EC2 instances)
+                SameSite = context.Request.IsHttps ? SameSiteMode.None : SameSiteMode.Lax,  // Use Lax for HTTP, None for HTTPS
                 Expires = DateTime.UtcNow.AddHours(CookieExpiryHours),  // Auto-expiration
                 Path = "/",             // Make cookie available for all paths
                 Domain = null           // Don't restrict domain to allow cross-origin
@@ -79,7 +79,7 @@ namespace Meter_Reading_Test.Helpers
             {
                 HttpOnly = true,
                 Secure = context.Request.IsHttps,
-                SameSite = SameSiteMode.None,
+                SameSite = context.Request.IsHttps ? SameSiteMode.None : SameSiteMode.Lax,
                 Path = "/",
                 Domain = null,
                 Expires = DateTime.UtcNow.AddDays(-1)  // Past date triggers deletion
