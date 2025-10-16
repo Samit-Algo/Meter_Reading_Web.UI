@@ -56,11 +56,16 @@ namespace Meter_Reading_Test.Pages
         /// </summary>
         public async Task<IActionResult> OnGetAsync()
         {
+            _logger.LogInformation("Admin page OnGet called");
+            
             // Check if user has authentication cookie
             if (!AuthHelper.IsAuthenticated(HttpContext))
             {
+                _logger.LogWarning("User not authenticated, redirecting to sign in page");
                 return RedirectToPage("/Authenitcation/SignIn");
             }
+            
+            _logger.LogInformation("User has authentication cookie, proceeding with token verification");
 
             // Verify token with backend for security
             var token = AuthHelper.GetAuthToken(HttpContext);

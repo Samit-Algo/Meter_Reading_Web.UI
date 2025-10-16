@@ -130,8 +130,10 @@ namespace Meter_Reading_Test.Pages.Authenitcation
                     {
                         // Store JWT token in secure HTTP-only cookie
                         AuthHelper.SetAuthCookie(HttpContext, loginResponse.AccessToken);
+                        _logger.LogInformation("Successfully stored authentication cookie for user: {Username}", Username);
 
                         // Redirect to admin dashboard
+                        _logger.LogInformation("Redirecting to admin page after successful login");
                         return RedirectToPage("/admin/Admin");
                     }
                     else

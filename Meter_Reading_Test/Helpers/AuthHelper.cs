@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Meter_Reading_Test.Helpers
@@ -46,7 +47,9 @@ namespace Meter_Reading_Test.Helpers
                 HttpOnly = true,        // Prevents JavaScript access (XSS protection)
                 Secure = context.Request.IsHttps,  // Only require HTTPS when actually using HTTPS
                 SameSite = SameSiteMode.None,      // Allow cross-origin requests (needed for separate EC2 instances)
-                Expires = DateTime.UtcNow.AddHours(CookieExpiryHours)  // Auto-expiration
+                Expires = DateTime.UtcNow.AddHours(CookieExpiryHours),  // Auto-expiration
+                Path = "/",             // Make cookie available for all paths
+                Domain = null           // Don't restrict domain to allow cross-origin
             };
 
             // Store token in cookie
@@ -77,6 +80,8 @@ namespace Meter_Reading_Test.Helpers
                 HttpOnly = true,
                 Secure = context.Request.IsHttps,
                 SameSite = SameSiteMode.None,
+                Path = "/",
+                Domain = null,
                 Expires = DateTime.UtcNow.AddDays(-1)  // Past date triggers deletion
             };
 
@@ -93,7 +98,14 @@ namespace Meter_Reading_Test.Helpers
         public static bool IsAuthenticated(HttpContext context)
         {
             var token = GetAuthToken(context);
-            return !string.IsNullOrEmpty(token);
+            var hasToken = !string.IsNullOrEmpty(token);
+            
+            // Debug logging
+            var logger = context.RequestServices.GetService<ILogger<object>>();
+            logger?.LogInformation("AuthHelper.IsAuthenticated: hasToken={HasToken}, tokenLength={TokenLength}, cookies={Cookies}", 
+                hasToken, token?.Length ?? 0, string.Join(", ", context.Request.Cookies.Keys));
+            
+            return hasToken;
         }
     }
 }
