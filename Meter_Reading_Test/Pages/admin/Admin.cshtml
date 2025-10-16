@@ -1,7 +1,7 @@
 ﻿@page
 @model Meter_Reading_Test.Pages.AdminModel
 @{
-    ViewData["Title"] = "Meter Reading OCR";
+    ViewData["Title"] = "AlgoOrange Compute Vision";
 }
 
 <!-- ========================================
@@ -194,7 +194,7 @@
                                         </div>
                                     </div>
                                     <div class="step-info">
-                                        <h6 class="mb-1 small">Paddle OCR</h6>
+                                        <h6 class="mb-1 small">Algo OCR-1</h6>
                                         <p class="small text-muted mb-0 step-status">Ready</p>
                                         <div class="progress mt-1 d-none step-progress" style="height: 2px;">
                                             <div class="progress-bar bg-primary" style="width: 0%"></div>
@@ -225,7 +225,7 @@
                                         </div>
                                     </div>
                                     <div class="step-info">
-                                        <h6 class="mb-1 small">Easy OCR</h6>
+                                        <h6 class="mb-1 small">Algo OCR-2</h6>
                                         <p class="small text-muted mb-0 step-status">Ready</p>
                                         <div class="progress mt-1 d-none step-progress" style="height: 2px;">
                                             <div class="progress-bar bg-primary" style="width: 0%"></div>
@@ -260,7 +260,7 @@
                                         </div>
                                     </div>
                                     <div class="step-info">
-                                        <h6 class="mb-1 small">Surya OCR</h6>
+                                        <h6 class="mb-1 small">Algo OCR-3</h6>
                                         <p class="small text-muted mb-0 step-status">Ready</p>
                                         <div class="progress mt-1 d-none step-progress" style="height: 2px;">
                                             <div class="progress-bar bg-primary" style="width: 0%"></div>
@@ -333,7 +333,7 @@
                                     </div>
                                 </div>
                                 <div class="mobile-step-content flex-grow-1">
-                                    <h6 class="mb-1">Paddle OCR</h6>
+                                    <h6 class="mb-1">Algo OCR-1</h6>
                                     <p class="text-muted mb-1 small mobile-step-status">Ready</p>
                                     <div class="progress mobile-step-progress d-none" style="height: 4px;">
                                         <div class="progress-bar bg-primary" style="width: 0%"></div>
@@ -356,7 +356,7 @@
                                     </div>
                                 </div>
                                 <div class="mobile-step-content flex-grow-1">
-                                    <h6 class="mb-1">Easy OCR</h6>
+                                    <h6 class="mb-1">Algo OCR-2</h6>
                                     <p class="text-muted mb-1 small mobile-step-status">Ready</p>
                                     <div class="progress mobile-step-progress d-none" style="height: 4px;">
                                         <div class="progress-bar bg-primary" style="width: 0%"></div>
@@ -379,7 +379,7 @@
                                     </div>
                                 </div>
                                 <div class="mobile-step-content flex-grow-1">
-                                    <h6 class="mb-1">Surya OCR</h6>
+                                    <h6 class="mb-1">Algo OCR-3</h6>
                                     <p class="text-muted mb-1 small mobile-step-status">Ready</p>
                                     <div class="progress mobile-step-progress d-none" style="height: 4px;">
                                         <div class="progress-bar bg-primary" style="width: 0%"></div>
@@ -1370,6 +1370,13 @@
             
         /* Enable click-to-zoom on preview image */
             previewImg.onclick = () => openImageZoomModal(e.target.result);
+            
+        /* Auto-trigger analysis after image preview is loaded */
+            setTimeout(() => {
+                if (selectedFile) {
+                    startProcessing();
+                }
+            }, 500); // Small delay to ensure UI is ready
         };
         reader.readAsDataURL(file);
     }

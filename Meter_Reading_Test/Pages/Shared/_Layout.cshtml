@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"] - EB Meter Admin</title>
+    <title>@ViewData["Title"] - AlgoOrange Compute Vision</title>
 
     <link rel="apple-touch-icon" sizes="180x180" href="~/assets/img/icons/logo.png" asp-append-version="true" />
     <link rel="icon" type="image/png" sizes="32x32" href="~/assets/img/icons/logo.png" asp-append-version="true" />
@@ -53,7 +53,7 @@
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
                                 <img src="~/assets/img/icons/logo.png" alt="EB" width="27" asp-append-version="true" />
-                                <h5 class="logo-text ms-2 d-none d-sm-block">EB Meter Admin</h5>
+                                <h5 class="logo-text ms-2 d-none d-sm-block">AlgoOrange Compute Vision Demo</h5>
                             </div>
                         </div>
                     </a>
@@ -76,43 +76,23 @@
                         </div>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span class="d-block" style="height:20px;width:20px;"><span data-feather="bell" style="height:20px;width:20px;"></span></span></a>
+                        <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside">
+                            <span class="d-block" style="height:20px;width:20px;position:relative;">
+                                <span data-feather="bell" style="height:20px;width:20px;"></span>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary fs-10" style="font-size: 0.6rem;">0</span>
+                            </span>
+                        </a>
                         <div class="dropdown-menu dropdown-menu-end notification-dropdown-menu py-0 shadow border navbar-dropdown-caret" aria-labelledby="navbarDropdownNotfication">
                             <div class="card position-relative border-0">
                                 <div class="card-header p-2">
                                     <div class="d-flex justify-content-between">
                                         <h5 class="text-body-emphasis mb-0">Notifications</h5>
-                                        <button class="btn btn-link p-0 fs-9 fw-normal" type="button">Mark all as read</button>
                                     </div>
                                 </div>
                                 <div class="card-body p-0">
-                                    <div class="scrollbar-overlay" style="height: 18rem;">
-                                        <div class="px-2 px-sm-3 py-3 notification-card position-relative read border-bottom">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex">
-                                                    <div class="avatar avatar-m me-3"><img class="rounded-circle" src="~/assets/img/team/40x40/30.webp" alt="" asp-append-version="true" /></div>
-                                                    <div class="flex-1 me-sm-3">
-                                                        <h4 class="fs-9 text-body-emphasis mb-1">Meter validation complete</h4>
-                                                        <p class="fs-9 text-body-highlight mb-0">Reading for Bill #A1024 was approved.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="px-2 px-sm-3 py-3 notification-card position-relative unread">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex">
-                                                    <div class="avatar avatar-m me-3"><img class="rounded-circle" src="~/assets/img/team/40x40/57.webp" alt="" asp-append-version="true" /></div>
-                                                    <div class="flex-1 me-sm-3">
-                                                        <h4 class="fs-9 text-body-emphasis mb-1">New submission</h4>
-                                                        <p class="fs-9 text-body-highlight mb-0">Joyson Mathew uploaded a new meter image.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="scrollbar-overlay d-flex align-items-center justify-content-center" style="height: 6rem;">
+                                        <span class="text-body-tertiary fs-9">No notifications</span>
                                     </div>
-                                </div>
-                                <div class="card-footer p-0 border-top border-translucent border-0">
-                                    <div class="my-2 text-center fw-bold fs-10 text-body-tertiary text-opacity-85"><a class="fw-bolder" href="#">Notification history</a></div>
                                 </div>
                             </div>
                         </div>

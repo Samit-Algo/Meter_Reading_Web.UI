@@ -10,10 +10,10 @@ using Meter_Reading_Test.Models;
 
 namespace Meter_Reading_Test.Pages.Authenitcation
 {
-    /// <summary>
+    
     /// Sign In Page Model - Handles user authentication
     /// Manages login form submission and JWT token storage
-    /// </summary>
+    
     public class SignInModel : PageModel
     {
         // ========================================
@@ -40,34 +40,34 @@ namespace Meter_Reading_Test.Pages.Authenitcation
         // Data-bound properties for login form
         // ========================================
 
-        /// <summary>
+        
         /// Username input - bound to form field
         /// Required for authentication
-        /// </summary>
+        
         [BindProperty]
         [Required(ErrorMessage = "Username is required")]
         public string Username { get; set; } = string.Empty;
 
-        /// <summary>
+        
         /// Password input - bound to form field
         /// Required for authentication, masked in UI
-        /// </summary>
+        
         [BindProperty]
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
-        /// <summary>
+        
         /// Remember Me checkbox - bound to form field
         /// Determines session persistence (currently stored in cookie)
-        /// </summary>
+        
         [BindProperty]
         public bool RememberMe { get; set; }
 
-        /// <summary>
+        
         /// Error message for display to user
         /// Populated when authentication fails
-        /// </summary>
+        
         public string? ErrorMessage { get; set; }
 
         // ========================================
@@ -75,10 +75,10 @@ namespace Meter_Reading_Test.Pages.Authenitcation
         // HTTP request handlers for page operations
         // ========================================
 
-        /// <summary>
+        
         /// GET request handler - Displays sign-in page
         /// Redirects to admin page if user is already authenticated
-        /// </summary>
+        
         public void OnGet()
         {
             // Check if user already has valid authentication cookie
@@ -88,10 +88,10 @@ namespace Meter_Reading_Test.Pages.Authenitcation
             }
         }
 
-        /// <summary>
+        
         /// POST request handler - Processes login form submission
         /// Authenticates with backend API and stores JWT token on success
-        /// </summary>
+        
         public async Task<IActionResult> OnPostAsync()
         {
             // Validate form data before processing
@@ -193,30 +193,30 @@ namespace Meter_Reading_Test.Pages.Authenitcation
     // Models for API communication
     // ========================================
 
-    /// <summary>
+    
     /// Login Response Model - Received from authentication API
     /// Contains JWT access token and metadata (token type, expiration)
-    /// </summary>
+    
     public class LoginResponse
     {
-        /// <summary>
+        
         /// JWT access token for authenticated requests
         /// Stored in secure HTTP-only cookie
-        /// </summary>
+        
         [JsonPropertyName("access_token")]
         public string? AccessToken { get; set; }
         
-        /// <summary>
+        
         /// Token type (typically "Bearer")
         /// Used in Authorization header format
-        /// </summary>
+        
         [JsonPropertyName("token_type")]
         public string? TokenType { get; set; }
         
-        /// <summary>
+        
         /// Token expiration time in seconds
         /// Used to determine when to refresh token
-        /// </summary>
+        
         [JsonPropertyName("expires_in")]
         public int? ExpiresIn { get; set; }
     }
